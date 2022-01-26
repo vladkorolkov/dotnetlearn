@@ -2,16 +2,16 @@
 {
     public class Factory
     {
-        public int id { get; set; }
-        public string name { get; set; }
-        public string description { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
 
 
-        public Factory(int Id, string Name, string Desc)
+        public Factory(int id, string name, string desc)
         {
-            id = Id;
-            name = Name;
-            description = Desc;
+            Id = id;
+            Name = name;
+            Description = desc;
         }
     }
 }

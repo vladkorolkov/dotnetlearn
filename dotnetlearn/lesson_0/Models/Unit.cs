@@ -2,15 +2,17 @@
 {
     public class Unit
     {
-        public int id { get; set; }
-        public string name { get; set; }
-        public int factoryId { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int FactoryId { get; set; }
 
-        public Unit(int Id, string Name, int FactoryId )
+        public Unit(int id, string name, int factoryId )
         {
-            id = Id;
-            name = Name;    
-            factoryId = FactoryId;  
+            Id = id;
+            Name = name;    
+            FactoryId = factoryId;  
         }
+
+
     }
 }

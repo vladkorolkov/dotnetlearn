@@ -1,4 +1,6 @@
 ﻿using lesson_0.Models;
+using System.Linq;
+
 namespace lesson_0
 {
     public static class Program
@@ -26,7 +28,7 @@ namespace lesson_0
             var units = GetAllUnits(Units);
             var factories = GetAllFactories(Factories);
             var totaVolume = GetTotalVolume(Tanks);
-            Console.WriteLine("Количество резервуаров: " + tanks.Count() + "\nКоличество установок: " + units.Count() + Environment.NewLine);
+            Console.WriteLine($"Количество резервуаров: {tanks.Count()} \nКоличество установок: {units.Count()}" + Environment.NewLine);
 
             bool isRunning = true;
             while (isRunning)
@@ -34,23 +36,23 @@ namespace lesson_0
                 //запрос на поиск установки
                 Console.WriteLine("Для поиска введите название установки ниже и нажмите Enter:");
                 var query = Console.ReadLine();
-                var foundUnit = GetUnit(Units, query);
 
-                if (foundUnit != null)
+                try
                 {
-                    Console.WriteLine("\nНайдено: " + foundUnit.name);
+                    var foundUnit = GetUnit(Units, query);
                     var factory = GetFactory(foundUnit, Factories);
                     if (factory != null)
                     {
-                        Console.WriteLine($"Резервуар 2 принадлежит установке {foundUnit.name} и заводу {factory.name}");
-                        Console.WriteLine("Общий объем резервуаров: " + totaVolume + "\nДля нового поиска нажмите любоую клавишу");
+                        Console.WriteLine($"Резервуар 2 принадлежит установке {foundUnit.Name} и заводу {factory.Name}");
+                        Console.WriteLine($"Общий объем резервуаров: {GetTotalVolume(Tanks)} \nДля нового поиска нажмите любоую клавишу");
                         Console.ReadLine();
                     }
                 }
-                else
+                catch
                 {
-                    Console.WriteLine("Ничего не найдено.");
+                    Console.WriteLine("Ошибка!");
                 }
+
             }
         }
         public static Tank[] GetTank(List<Tank> Tanks)
@@ -67,21 +69,21 @@ namespace lesson_0
         }
         public static Unit GetUnit(List<Unit> units, string name)
         {
+            var result = units.Where(x => x.Name == name).First();
+            if (result != null)
+                return result;
+            else
+                throw new Exception();
 
-            var q = from unit in units
-                    where unit.name == name
-                    select unit;
-            var result = q.FirstOrDefault();
-            return result;
         }
 
         public static Factory GetFactory(Unit unit, List<Factory> factories)
         {
-            var q = from factory in factories
-                    where factory.id == unit?.factoryId
-                    select factory;
-            var result = q?.FirstOrDefault();
-            return result;
+            var result = factories.Where(x => x.Id == unit.FactoryId).First();
+            if (result != null)
+                return result;
+            else
+                throw new Exception();
         }
 
         public static Factory[] GetAllFactories(List<Factory> factories)
@@ -93,8 +95,12 @@ namespace lesson_0
 
         public static int GetTotalVolume(List<Tank> tanks)
         {
-            int total = tanks.Count();
-            return total;
+            int totalValue = 0;
+            foreach (var tank in tanks)
+            {
+                totalValue += tank.Value;
+            }
+            return totalValue;
         }
     }
 }
