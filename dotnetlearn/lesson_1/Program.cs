@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Globalization;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 namespace lesson_1;
@@ -7,7 +8,7 @@ public record SumByMonth(string Date, int Sum);
 
 public class Program
 {
-  
+
     public static void Main()
     {
         Dictionary<int, string> monthNames = new Dictionary<int, string>()
@@ -25,7 +26,7 @@ public class Program
             { 11,"Ноябрь" },
             { 12,"Декабрь" }
         };
-       
+
         List<Deal> deals = JsonSerializer.Deserialize<List<Deal>>(File.ReadAllText("all_deals.json"));
 
         var numdersOfDeals = GetNumbersOfDeal(deals);
@@ -33,14 +34,14 @@ public class Program
         Console.WriteLine("Найдены id первых пяти сделок:\n");
         foreach (var deal in numdersOfDeals)
         {
-            Console.WriteLine($"{deal}"); 
+            Console.WriteLine($"{deal}");
         }
 
         Console.WriteLine("\n\nСумма сделок помесячно:");
         var dealsByMonth = GetSumsByMonth(deals, monthNames);
         foreach (var date in dealsByMonth)
         {
-            Console.WriteLine($"\n{date.Date} : {date.Sum}");          
+            Console.WriteLine($"\n{date.Date} : {date.Sum}");
         }
         Console.ReadLine();
 
@@ -48,30 +49,30 @@ public class Program
 
     public static List<string> GetNumbersOfDeal(List<Deal> deals)
     {
-        var q = (from d in deals
-                 where d.Sum > 100
-                 orderby d.Date, d.Sum
-                 select d.Id).Take(5).ToList<string>();
-        return q;
+        //var result = (from d in deals
+        //              where d.Sum > 100
+        //              orderby d.Date, d.Sum
+        //              select d.Id).Take(5).ToList<string>();
+
+        var result = deals
+            .Where(d => d.Sum > 100)
+            .OrderBy(d => d.Date)
+            .ThenBy(d => d.Sum)
+            .Select(d => d.Id)
+            .Take(5)
+            .ToList();
+        return result;
     }
 
 
     public static List<SumByMonth> GetSumsByMonth(List<Deal> deals, Dictionary<int, string> MonthNames)
     {
         var q = deals
-            .GroupBy(x => x.Date.Month);
-
-        List<SumByMonth> sm = new List<SumByMonth>();
-
-        foreach (var key in q)
-        {
-            int sum = 0;
-            foreach (var item in key)
-            {
-                sum += item.Sum;               
-            }
-            sm.Add(new SumByMonth(MonthNames[key.Key], sum));
-        }
-        return sm;
+            .GroupBy(x => CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(x.Date.Month))                         
+            .Select(y => new SumByMonth(              
+                y.Key,
+                y.Select(s => s.Sum).Sum()));
+        
+        return q.ToList();
     }
 }
