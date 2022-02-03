@@ -6,12 +6,13 @@ var secret = "638e0c0799ce0d1fcd992ac7000b336aa7a93f65";
 Console.WriteLine("Введите ИНН организации: ");
 var query = Console.ReadLine();
 GetInfo(query, token);
+
 Console.ReadLine();
 
 static async void GetInfo(string inn, string token)
 {
     var api = new SuggestClientAsync(token);
     var response = await api.FindParty("7707083893");
-    var party = response.suggestions[0].data;
-
+    var partyName = response.suggestions[0].value;
+    Console.WriteLine(partyName);
 }
