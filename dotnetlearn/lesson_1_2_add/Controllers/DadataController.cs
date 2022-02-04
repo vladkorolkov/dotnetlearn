@@ -8,19 +8,25 @@ namespace lesson_1_2_add.Controllers
     [ApiController]
     public class DadataController : Controller
     {
-        private readonly string token = "2dee0cdd0703e88bd28fd6b064629ee65d7fb225";
-        private readonly string secret = "638e0c0799ce0d1fcd992ac7000b336aa7a93f65";
+        private readonly string Token = "2dee0cdd0703e88bd28fd6b064629ee65d7fb225";
+        private readonly string Secret = "638e0c0799ce0d1fcd992ac7000b336aa7a93f65";
+      
         
         [HttpGet]
-        
-        public string Get()
+        public string Get([FromQuery] string query)
         {
-            var api = new SuggestClient(token);
-            var response =  api.FindParty("6165216796");
-            var partyName = response.suggestions[0].value;
+            var api = new SuggestClient(Token);
+            string partyName = api.FindParty(query).suggestions[0].value; ;
             return partyName;
         }
-
+        [HttpPost]
+        public string Post([FromQuery] string query)
+        {
+            var api = new SuggestClient(Token);
+            string partyName = api.FindParty(query).suggestions[0].value; ;
+            return partyName;
+            
+        }
          
     }
 }
